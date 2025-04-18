@@ -152,7 +152,7 @@ sub getLatexFormat {
 	for(my $k=0; $k < @keys; $k++ ) {
 		my $w = $keys[$k];
 #		print "Current key: $w\n";
-		$text =~ s/\b($w)\b/\\textbf\{$1\}\\footnote\[$count\]\{$w \- $dict{$w}\}\\index\{$w\}/gi;
+		$text =~ s/\b($w)\b/\\textbf\{$1\}\\index\{$1\}\\stepcounter\{footnote\}\\footnotetext\{\\textbg\{$w\}  \- $dict{$w}\}\\index\{$w\}/gi;
 	}
 return $text;
 
@@ -168,14 +168,23 @@ sub printBook {
 	my ($self,$bookdata) = @_;
 
 my $latex = <<BOOK;
-\\documentclass[openright,twoside,10pt]{book}
-\\usepackage[utf8]{inputenc}
+\\documentclass{book}
+\\usepackage{makeidx}
+\\makeindex
+\\pagestyle{plain} \\linespread{1}
+\\begin{document}
+\frontmatter
+
 \\title{$self->{'_title'}}
 \\author{$self->{'_author'}}
-\\begin{document}
+
+\\mainmatter
 $bookdata
-\\section{APPENDIX}
-\\makeindex
+
+\backmatter
+\\newpage\\textbf{APPENDIX}
+
+\\printindex
 \\end{document}
 BOOK
 
